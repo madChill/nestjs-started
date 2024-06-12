@@ -1,0 +1,58 @@
+version: 0.2
+
+env:
+  git-credential-helper: yes
+  secrets-manager:
+    AWS_ACCOUNT_ID: "$Env/aws:AWS_ACCOUNT_ID"
+    GIT_USERNAME: "$Env/bitbucket:GIT_USERNAME"
+    GIT_PASSWORD: "$Env/bitbucket:GIT_PASSWORD"
+    GIT_EMAIL: "$Env/bitbucket:GIT_EMAIL"
+    DOCKER_USERNAME: "$Env/docker:DOCKER_USERNAME"
+    DOCKER_PASSWORD: "$Env/docker:DOCKER_PASSWORD"
+    AUTH_PUBLIC_KEY: "$Env/authKey:AUTH_PUBLIC_KEY"
+    AWS_ACCESS_KEY: "$Env/aws:AWS_ACCESS_KEY"
+    AWS_SECRET_KEY: "$Env/aws:AWS_SECRET_KEY"
+    AWS_REGION: "$Env/aws:AWS_REGION"
+    DB_URI: "$Env/db-uri:TREVO_DB_URI"
+    USERS_MEDIA_BUCKET: "$Env/aws:USERS_MEDIA_BUCKET"
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - echo Logging in to Docker Hub..
+      - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/user-service
+      - SERVICE_NAME=user-service
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+      - HEAD_REF=$(echo $CODEBUILD_WEBHOOK_HEAD_REF | cut -c 12-20)
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - |
+        printf 'DB_URI=%s\n USERS_MEDIA_BUCKET=%s\n AWS_ACCESS_KEY=%s\n AWS_SECRET_KEY=%s\n AWS_REGION=%s\n 
+        ' $DB_URI $USERS_MEDIA_BUCKET $AWS_ACCESS_KEY $AWS_SECRET_KEY $AWS_REGION> .env
+      - docker build -t $REPOSITORY_URI:IMAGE_TAG .
+      - docker tag $REPOSITORY_URI:IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo updating repo...
+      - sh deploy/templete.sh $SERVICE_NAME $REPOSITORY_URI:$IMAGE_TAG $HEAD_REF
+      - git config --global user.email $GIT_EMAIL
+      - git config --global user.name $GIT_EMAIL
+      - git remote set-url origin https://$GIT_USERNAME:$GIT_PASSWORD@bitbucket.org/socar-my/user-service.git
+      - git checkout $HEAD_REF
+      - git add .
+      - git commit -m 'Release to deployment'
+      - git push origin $HEAD_REF -f
+      - echo latest image updated to repo
+artifacts:
+    files: imagedefinitions.json
+

@@ -1,0 +1,38 @@
+server {
+    listen 80;
+
+    resolver 127.0.0.11;
+
+    error_page 404 /index.html;
+
+    location @error {
+        rewrite .+ / break;
+        proxy_pass http://host.docker.internal:3010;
+    }
+
+    location / {
+        proxy_intercept_errors on;
+        error_page 404 = @error;
+        proxy_pass http://host.docker.internal:3010/;
+    }
+
+    location /api/ {
+        proxy_pass http://host.docker.internal:4000/;
+    }
+
+    location /login/ {
+        proxy_pass http://host.docker.internal:3030/;
+    }
+
+    location ~ ^/(~[a-z]+|[0-9]+)/ {
+        proxy_pass http://host.docker.internal/$1;
+    }
+
+    location /custom-elements.js {
+        proxy_pass http://host.docker.internal:8000/index.js;
+    }
+
+    location /service-worker.js {
+        proxy_pass http://host.docker.internal:3010/service-worker.js;
+    }
+}

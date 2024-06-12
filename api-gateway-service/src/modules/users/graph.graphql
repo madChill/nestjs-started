@@ -1,0 +1,69 @@
+type User {
+  id: Int
+  email: String
+  firstName: String
+  lastName: String
+  phoneNumber: String
+}
+
+input CreateUserInput {
+  username: String
+  email: String
+  firstName: String
+  lastName: String
+  phoneNumber: String
+}
+
+type CreateUserOutput {
+  user: User!
+  status: Boolean!
+}
+
+type UpdateUserOutput {
+  user: User!
+  status: Boolean!
+}
+
+input UpdateUserInput {
+  id: Int!
+  username: String
+  email: String
+  firstName: String
+  lastName: String
+  phoneNumber: String
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): CreateUserOutput!
+  updateUser(input: UpdateUserInput!): UpdateUserOutput!
+  deleteUser(id: Int!): Int!
+}
+
+input queryInputEmployees {
+  limit: Int
+  offset: Int
+  sortField: String
+  sortDirection: String
+  search: String
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+}
+
+type LoginOutput {
+  token: String
+  user: User
+}
+
+type getEmployeesOutput {
+  user: [User!]!
+  total: Int!
+}
+
+type Query {
+  getEmployee(id: Int!): User
+  getEmployees(input: queryInputEmployees): getEmployeesOutput!
+  login(input: LoginInput!): LoginOutput
+}

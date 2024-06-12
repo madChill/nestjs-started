@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package user;
+
+service UserService {
+  rpc FindById (UserById) returns (GetUserOutput) {};
+  rpc CreateUser (CreateUserInput) returns (GetUserOutput) {};
+  rpc FindAllUsers (FindAllUsersRequest) returns (OutputReadUser) {};
+  rpc UpdateUser (UpdateUserRequest) returns (GetUserOutput) {};
+  rpc DeleteUser (UserById) returns (GetUserOutput) {};
+}
+message FindAllUsersRequest {
+  string search = 1;
+  int32 page = 2;
+  int32 pageSize = 3;
+  string sort = 4;
+}
+message UserById {
+  int32 id = 1;
+}
+
+message GetUserTagsOptions {
+  string userId = 1;
+}
+
+message CreateUserInput {
+  string email = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string phoneNumber = 4;
+}
+message UpdateUserRequest {
+  int32 id = 1;
+  string email = 2;
+  string firstName = 3;
+  string lastName = 4;
+  string phoneNumber = 5;
+}
+message GetUserOutput {
+  int32 id = 1;
+  string email = 2;
+  string firstName = 3;
+  string lastName = 4;
+  string phoneNumber = 5;
+  string roles = 6;
+  string updatedAt = 7;
+  string createdAt = 8;
+}
+
+message OutputReadUser {
+  int32 total = 1;
+  repeated GetUserOutput users = 2;
+}
+message Users {
+  repeated GetUserOutput users = 1;
+}
