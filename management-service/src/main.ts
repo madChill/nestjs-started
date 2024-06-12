@@ -9,13 +9,13 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
-      url:'localhost:5005',
+      url:process.env.MANAGEMENT_SERVICE,
       package: AUTH_PACKAGE_NAME,
       protoPath: 'src/proto/user.proto',
     },
   });
   await app.startAllMicroservices();
-  await app.listen(5005);
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  await app.listen(5001);
+  console.log(`Application is running on2: ${await app.getUrl()}`);
 }
 bootstrap();

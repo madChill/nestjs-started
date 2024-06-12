@@ -63,3 +63,11 @@ export interface findAllInput {
   sortDirection: string,
   search: string
 }
+export class User implements GetUserOutput {
+  id: number
+  email?: number
+  firstName?: number
+  lastName?: number
+  phoneNumber?: number
+  password?: string
+}

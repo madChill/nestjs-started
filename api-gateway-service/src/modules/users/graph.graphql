@@ -58,7 +58,7 @@ type LoginOutput {
 }
 
 type getEmployeesOutput {
-  user: [User!]!
+  users: [User!]!
   total: Int!
 }
 

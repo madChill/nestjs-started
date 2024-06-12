@@ -31,5 +31,5 @@ then
  cd vite-react-graphql && pnpm dev
 ```
 
-Now you can access http://localhost:3010 backend api-gateway
+Now you can access http://localhost:3010 for ui management employees
 

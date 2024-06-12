@@ -9,7 +9,7 @@ export const DELETE_CONTACT = gql`
 export const FETCH_EMPLOYEES = gql`
 query Employees($input: queryInputEmployees) {
   getEmployees(input: $input) {
-    user{
+    users {
       id
       email
       firstName

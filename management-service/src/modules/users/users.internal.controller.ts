@@ -24,10 +24,7 @@ export class UsersInternalController {
   }
   @GrpcMethod('UserService', 'CreateUser')
   async createUser(data: CreateUserInput): Promise<any> {
-    console.log(data, "==========22===data===========");
     const { password, ...user} = await this.usersService.createUser(data);
-    console.log(user, "=============user===========");
-
     return user;
   }
   
@@ -46,7 +43,6 @@ export class UsersInternalController {
   
   @GrpcMethod('UserService', 'FindAllUsers')
   async findAllUser(data: findAllInput): Promise<any> {
-    console.log(data, "==data==");
     
     const users = await this.usersService.findAll(data);
     return users;

@@ -1,12 +1,11 @@
 import { Args, ID, Query, Resolver, ResolveReference, Mutation } from '@nestjs/graphql';
 import { UsersService } from './users.service';
-import { User } from './user.model';
 import {
-    UserById,
+    User,
     CreateUserInput,
-    UpdateUserInput
+    UpdateUserInput,
+    GetUserOutput
   } from './users.interface';
-import { count, log } from 'console';
 @Resolver('User')
 export class UsersResolver {
   constructor(private usersService: UsersService) {}

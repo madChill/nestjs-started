@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useMutation } from "@apollo/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, createSearchParams } from "react-router-dom";
 import { notification } from "antd";
 import { CREATE_EMPLOYEE_WITH_PHONES } from "./graphql";
 
@@ -22,19 +22,16 @@ export const useFetchContactForm = () => {
             alert("Names shouldn't have special characters.");
             return;
         }
-
         try {
             const { data, errors } = await addContact({
                 variables: {
                     input: { firstName: firstName, lastName: lastName, phoneNumber: phones, email }
                 },
             });
-
             if (errors) {
                 alert("Error adding contact: " + errors[0].message);
                 return;
             }
-
             if (data && data?.createUser?.status) {
                 notification.success({
                     message: "Contact added successfully",
@@ -42,8 +39,13 @@ export const useFetchContactForm = () => {
                 setFirstName("");
                 setLastName("");
                 setPhones("");
-
-                navigate("/employee/list");
+                const updated = new Date().toISOString()
+                navigate({
+                    pathname: "/",
+                    search: createSearchParams({
+                        updated
+                    }).toString()
+                });
             } else {
                 notification.error({
                     message: "Error adding contact",
@@ -52,7 +54,7 @@ export const useFetchContactForm = () => {
         } catch (error) {
             notification.error({
                 message: "Error adding contact",
-                description: (error as Error).message,
+                description: "An error occurred while adding contact. Please try again.",
             });
         }
     };

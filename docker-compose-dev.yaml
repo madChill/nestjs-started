@@ -4,42 +4,48 @@ services:
   api-gateway-service:
     build:
       context: api-gateway-service
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     image: api-gateway-service
     environment:
       ALGORITHMS: RS256
       APP_PORT: ${APP_PORT:-4000}
       DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
       DB_DATABASE: ${DB_DATABASE:-testdb}
       DB_USERNAME: ${DB_USERNAME:-cong}
       DB_PASSWORD: ${DB_PASSWORD:-mysecretpassword}
-      MANAGEMENT_SERVICE: ${MANAGEMENT_SERVICE:-localhost:5005}
+      MANAGEMENT_SERVICE: ${MANAGEMENT_SERVICE:-management-service:5005}
+    expose:
+      - 4000
     ports:
       - 4000:4000
     depends_on:
       - db
     volumes:
-      - ./api-gateway-service:/api-gateway-service/
+      - ./api-gateway-service/src:/api-gateway-service/src
 
   management-service:
     build:
       context: management-service
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     image: management-service
     environment:
       ALGORITHMS: RS256
       RPC_PORT: ${RPC_PORT-5005}
       DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
       DB_DATABASE: ${DB_DATABASE:-testdb}
       DB_USERNAME: ${DB_USERNAME:-cong}
       DB_PASSWORD: ${DB_PASSWORD:-mysecretpassword}
-      MANAGEMENT_SERVICE: ${MANAGEMENT_SERVICE:-localhost:5005}
+      MANAGEMENT_SERVICE: ${MANAGEMENT_SERVICE:-management-service:5005}
+    expose:
+      - 5005
     ports:
       - 5005:5005
     depends_on:
       - db
     volumes:
-      - ./api-gateway-service:/api-gateway-service/
+      - ./management-service/src:/management-service/src
   db:
     image: postgres:12
     restart: always

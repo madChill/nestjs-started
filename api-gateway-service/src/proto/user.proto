@@ -11,8 +11,8 @@ service UserService {
 }
 message FindAllUsersRequest {
   string search = 1;
-  int32 page = 2;
-  int32 pageSize = 3;
+  int32 limit = 2;
+  int32 offset = 3;
   string sort = 4;
 }
 message UserById {

@@ -91,6 +91,7 @@ export class UsersService {
     if(input.password){
       rest.password = this.hashPassword(input.password)
     }
+    
     await this.userModel.update(rest, {
       where: { id },
     });
@@ -109,8 +110,6 @@ export class UsersService {
   }
   async findByEmail(data: UserByEmail): Promise<any> {
     const { emails } = data;
-
-    console.log(`emails: ${emails}`);
 
     const filters = _.pickBy(
       {
