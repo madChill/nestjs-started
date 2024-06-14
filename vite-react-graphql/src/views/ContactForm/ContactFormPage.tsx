@@ -1,10 +1,10 @@
 import {
-  Input,
   Button,
+  Input,
   Form,
   Space,
-  Typography,
   Breadcrumb,
+  Typography,
 } from "antd";
 import {
   CotainerPage,
@@ -13,59 +13,54 @@ import {
   ImageContainer,
 } from "../../component/styledComponent";
 import { WrappedSEO } from "../../component/WrappedSEO";
-import { useUpdateEmployees } from "./hooks";
+import { useFetchContactForm } from './hooks'
 
-
-export const EditContactForm: React.FC = () => {
+export const ContactForm = () => {
   const {
-    handleUpdate,
-    firstName, setFirstName,
-    lastName, setLastName,
-    phones, setPhones,
-    email, setEmail
-  } = useUpdateEmployees()
+    firstName, setFirstName, lastName,
+    setLastName, phones, setPhones,
+    email, setEmail, handleSubmit, loading
+  } = useFetchContactForm()
+
   return (
     <CotainerPage>
-      <WrappedSEO title="Edit Employee" />
+      <WrappedSEO title={"Create Contact"} />
       <StyledFormContainer>
         <div>
-          <Typography.Title>Edit Employee</Typography.Title>
+          <Typography.Title>Create Contact</Typography.Title>
           <Breadcrumb>
             <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>
               <a href="/employee/list">Employees List</a>
             </Breadcrumb.Item>
-            <Breadcrumb.Item>Edit Employee</Breadcrumb.Item>
+            <Breadcrumb.Item>Create Contact</Breadcrumb.Item>
           </Breadcrumb>
 
           <SpacedStyle>
-            <Form layout="vertical">
-              
-            <Form.Item label="Email" required>
+            <Form layout="vertical" onSubmitCapture={handleSubmit}>
+              <Form.Item label="Email" required>
                 <Input
-                  disabled
                   type="email"
                   data-testid="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </Form.Item>
-
-              <Form.Item label="First Name">
+              <Form.Item label="First Name" required>
                 <Input
-                  value={firstName}
                   data-testid="firstNameInput"
-                  id="firstNameInput"
+                  value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="First Name"
                 />
               </Form.Item>
-              <Form.Item label="Last Name">
+
+              <Form.Item label="Last Name" required>
                 <Input
                   value={lastName}
+                  data-testid="lastNameInput"
                   onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Last Name"
                 />
+                
               </Form.Item>
               <Form.Item label="Phone Number" required>
                 <Input
@@ -75,13 +70,16 @@ export const EditContactForm: React.FC = () => {
                 />
               </Form.Item>
 
-              <Form.Item>
-                <Space>
-                  <Button type="primary" onClick={handleUpdate}>
-                    Update Contact
-                  </Button>
-                </Space>
-              </Form.Item>
+              <Space>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  data-testid="submitButton"
+                  loading={loading}
+                >
+                  Add Contact
+                </Button>
+              </Space>
             </Form>
           </SpacedStyle>
         </div>

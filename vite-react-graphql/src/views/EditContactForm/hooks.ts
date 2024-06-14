@@ -11,7 +11,7 @@ export const useUpdateEmployees = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data } = useQuery(FETCH_CONTACT_BY_ID, {
+  const { data, error } = useQuery(FETCH_CONTACT_BY_ID, {
     variables: { id: parseInt(id ?? "") },
     skip: !id,
   });
@@ -23,6 +23,7 @@ export const useUpdateEmployees = () => {
 
   useEffect(() => {
     if (data) {
+      
       setFirstName(data.getEmployee.firstName);
       setLastName(data.getEmployee.lastName);
       setEmail(data.getEmployee.email);
@@ -30,7 +31,17 @@ export const useUpdateEmployees = () => {
     }
   }, [data]);
 
-  const [updateContact] = useMutation(UPDATE_CONTACT, {
+  useEffect(() => {
+    if (error) {
+      notification.error({
+        message: "Error fetching contact",
+        description: error.message,
+      });
+      navigate("/not-found");
+    }
+  }, [error]);
+
+  const [updateContact, { loading }] = useMutation(UPDATE_CONTACT, {
     onCompleted: (res) => {
       notification.success({ message: "Contact updated successfully" });
       const updated = new Date().toISOString()
@@ -63,6 +74,7 @@ export const useUpdateEmployees = () => {
     handleUpdate,
     firstName, setFirstName,
     lastName, setLastName,
-    phones, setPhones
+    phones, setPhones,
+    loading
   }
 };

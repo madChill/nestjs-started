@@ -1,14 +1,10 @@
-import { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { useNavigate } from "react-router-dom";
 import {
-  Button,
   Input,
+  Button,
   Form,
   Space,
-  Breadcrumb,
   Typography,
-  notification,
+  Breadcrumb,
 } from "antd";
 import {
   CotainerPage,
@@ -17,55 +13,59 @@ import {
   ImageContainer,
 } from "../../component/styledComponent";
 import { WrappedSEO } from "../../component/WrappedSEO";
-import { useFetchContactForm } from './hooks'
+import { useUpdateEmployees } from "./hooks";
 
-export const ContactForm = () => {
+
+export const EditContactForm: React.FC = () => {
   const {
-    firstName, setFirstName, lastName,
-    setLastName, phones, addContact, setPhones,
-    email, setEmail,
-    navigate, handleSubmit,
-  } = useFetchContactForm()
-
+    handleUpdate,
+    firstName, setFirstName,
+    lastName, setLastName,
+    phones, setPhones,
+    email, setEmail, loading
+  } = useUpdateEmployees()
   return (
     <CotainerPage>
-      <WrappedSEO title={"Create Contact"} />
+      <WrappedSEO title="Edit Employee" />
       <StyledFormContainer>
         <div>
-          <Typography.Title>Create Contact</Typography.Title>
+          <Typography.Title>Edit Employee</Typography.Title>
           <Breadcrumb>
             <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>
               <a href="/employee/list">Employees List</a>
             </Breadcrumb.Item>
-            <Breadcrumb.Item>Create Contact</Breadcrumb.Item>
+            <Breadcrumb.Item>Edit Employee</Breadcrumb.Item>
           </Breadcrumb>
 
           <SpacedStyle>
-            <Form layout="vertical" onSubmitCapture={handleSubmit}>
-              <Form.Item label="Email" required>
+            <Form layout="vertical">
+              
+            <Form.Item label="Email" required>
                 <Input
+                  disabled
                   type="email"
                   data-testid="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item label="First Name" required>
+
+              <Form.Item label="First Name">
                 <Input
-                  data-testid="firstNameInput"
                   value={firstName}
+                  data-testid="firstNameInput"
+                  id="firstNameInput"
                   onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="First Name"
                 />
               </Form.Item>
-
-              <Form.Item label="Last Name" required>
+              <Form.Item label="Last Name">
                 <Input
                   value={lastName}
-                  data-testid="lastNameInput"
                   onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Last Name"
                 />
-                
               </Form.Item>
               <Form.Item label="Phone Number" required>
                 <Input
@@ -75,15 +75,13 @@ export const ContactForm = () => {
                 />
               </Form.Item>
 
-              <Space>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  data-testid="submitButton"
-                >
-                  Add Contact
-                </Button>
-              </Space>
+              <Form.Item>
+                <Space>
+                  <Button loading={loading} type="primary" onClick={handleUpdate}>
+                    Update Contact
+                  </Button>
+                </Space>
+              </Form.Item>
             </Form>
           </SpacedStyle>
         </div>

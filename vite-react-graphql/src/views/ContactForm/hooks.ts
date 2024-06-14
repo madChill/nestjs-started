@@ -9,7 +9,7 @@ export const useFetchContactForm = () => {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [phones, setPhones] = useState("");
-    const [addContact] = useMutation(CREATE_EMPLOYEE_WITH_PHONES);
+    const [addContact, { loading }] = useMutation(CREATE_EMPLOYEE_WITH_PHONES);
     const navigate = useNavigate();
 
     const handleSubmit = async (e: { preventDefault: () => void }) => {
@@ -63,6 +63,6 @@ export const useFetchContactForm = () => {
         firstName, setFirstName, lastName,
         email, setEmail,
         setLastName, phones, addContact, setPhones,
-        navigate, handleSubmit
+        navigate, handleSubmit, loading
     };
 };
